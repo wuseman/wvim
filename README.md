@@ -4,7 +4,7 @@ My setup for VIM text editor. Someone may like the setup but it's here for keep 
 
 ## Preview
 
-![Screenshot](.previews/wuseman-theme.png)
+![Screenshot](https://i.imgur.com/t16dDw4.png)
 
 ## How To:
 
