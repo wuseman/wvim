@@ -1,7 +1,7 @@
 " File              : .vimrc
 " Author            : wuseman <wuseman@nr1.nu>
 " Date              : 23.04.2019
-" Last Modified Date: 23.04.2019
+" Last Modified Date: 16/Feb/2020
 " Last Modified By  : wuseman <wuseman@nr1.nu>
 " Use Vim settings, rather than Vi settings (much better!).
 
@@ -15,7 +15,6 @@ set nowrap
 set syntax=on
 
 " Theme
-"colorscheme wtheme
 colorscheme w
 
 " Show numbers on
@@ -88,6 +87,7 @@ nnoremap g# g#zz
 
 " Shift to the next round tab stop.
 set shiftround
+
 " Set auto indent spacing.
 set shiftwidth=2
 
@@ -104,13 +104,18 @@ nnoremap S  :x<CR>
 nnoremap S  :x<CR>
 
 " Add header for shell scripts
+" au – means autocmd
+" bufnewfile – event for opening a file that doesn’t exist for editing.
+" *.sh – consider all files with .sh extension.
 au BufNewFile *.sh 0r ~/.vim/headers/bash_header.sh
+autocmd Bufwritepre,filewritepre *.sh exe "1," . 42 . "g/Modified:.*/s/Modified:.*/Modified: " .strftime("%H:%M:%S - %Y-%m-%d")
+autocmd Bufwritepre,filewritepre *.sh exe "1," . 43 . "g/###########################################################################"
 
 " Uncomment the following to have Vim load indentation rules and plugins
 " according to the detected filetype.
-if has("autocmd")
-  filetype plugin indent on
-endif
+"if has("autocmd")
+"  filetype plugin indent on
+"endif
 
 " Jump to last line instead of -1
 set virtualedit=onemore
@@ -168,6 +173,63 @@ set laststatus=2
 set statusline+=\ Line:\ %l\ of\ %L         
 set statusline+=\ (%2p%%)\
 
+" Add time by press F5
+" Examples
+" ---------------------------
+" %c                         Thu 27 Sep 2007 07:37:42 AM EDT (depends on locale)
+" %a %d %b %Y                Thu 27 Sep 2007
+" %b %d, %Y                  Sep 27, 2007
+" %d/%m/%y %H:%M:%S          27/09/07 07:36:32
+" %H:%M:%S                   07:36:44
+" %T                         07:38:09
+" %m/%d/%y                   09/27/07
+" %y%m%d                     070927
+" %x %X (%Z)                 09/27/2007 08:00:59 AM (EDT)
+" % Y-%m-%d                   2016-11-23
+" %F                         2016-11-23 (works on some systems)
 
+:inoremap <F5> <C-R>=strftime("%c")<CR>
+":nnoremap <F5> "=strftime("%d/%m/%y %H:%M:%S")<CR>P
+:nnoremap D "=strftime("%d/%m/%y %H:%M:%S")<CR>P
 
+" Autoadd Shebang
+augroup Shebang
+  autocmd BufNewFile *.py 0put =\"#!/usr/bin/env python\<nl># -*- coding: iso-8859-15 -*-\<nl>\"|$
+  autocmd BufNewFile *.rb 0put =\"#!/usr/bin/env ruby\<nl># -*- coding: None -*-\<nl>\"|$
+  autocmd BufNewFile *.tex 0put =\"%&plain\<nl>\"|$
+  autocmd BufNewFile *.\(cc\|hh\) 0put =\"//\<nl>// \".expand(\"<afile>:t\").\" -- \<nl>//\<nl>\"|2|start!
+augroup END
 
+" Write file and run it as bash
+:map <F10> :w<CR>:!bash %<CR>  
+
+" number of visual spaces per TAB
+set tabstop=4 
+
+" tabs are spaces
+set expandtab    
+
+" show command in bottom bar
+set showcmd             
+
+" load filetype-specific indent files
+filetype indent on
+
+" visual autocomplete for command menu
+set wildmenu 
+
+" highlight matching [{()}]
+set showmatch           
+
+" nnoremap <Left>  :echoe "Use h"<CR>
+" nnoremap <Right> :echoe "Use l"<CR>
+" nnoremap <Up>    :echoe "Use k"<CR>
+" nnoremap <Down>  :echoe "Use j"<CR>
+
+" Select all text
+nnoremap vA ggVG
+
+" Yank to end of line
+nnoremap Y y$
+
+noremap go lb"bPldwi <Esc>hbye
